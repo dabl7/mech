@@ -1,0 +1,1004 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Full Mech Calculator</title>
+  <link rel="icon" href="./logo.png" type="image/png">
+</head>
+<body style=background-color:#707070>
+  <h2>Full Mech Calculator (for BABFT)</h2>
+
+  <label>Mech size (a): <input id="a" type="number" step="any" value="4"></label><br>
+
+  <label>Durability:
+    <select id="durability">
+      <option value="1">1 hp (hinges)</option>
+      <option value="10">10 hp (new wheels)</option>
+    </select>
+  </label><br>
+
+  <label>Device:
+    <select id="device">
+      <option value="pc">pc</option>
+      <option value="mobile">mobile</option>
+    </select>
+  </label><br><br>
+
+  <button id="calc">Calculate</button>
+
+  <pre id="out">enable javascript</pre>
+
+  <br><pre style="font-size: 9px;">v1.0.0 (YouTube: @dabl2829)</pre>
+
+  <script>
+    //full mech calculator 2026 Feb 28 (by @dabl2928 on youtube)
+    //v1.0.0 - initial (2026 Feb 28)
+
+    //total 50 hours
+
+    function round(n) {
+      return Math.round(n*100)/100
+    } //2 decimals
+
+    function io(id) {
+      return document.getElementById(id);
+    } //input output
+
+    function sym(dim) {
+      ais=round(dim/2-1);
+      return ais;
+    };
+
+    function one(dim) {
+      ais=round(dim-2);
+      return ais;
+    };
+
+    function piston(dist) {
+      if (dist<=10){
+        string=`place 1 piston and set it's length to ${round(dist)}`
+      } else if (dist%10==0) {
+        tens=round(dist/10)
+        string=`place ${tens}x pistons (with all their lengths set to 10)`
+      } else {
+        tens=Math.floor(dist/10);
+        cust=round(dist-tens*10)
+        string=`place ${tens}x pistons (with length set to 10) and one piston with ${cust} length`
+      };
+      return string;
+    };
+
+    mh=2.1 //minimum hinge size
+    mw=6.6 //minimum wheel size
+
+    function asciimech() {
+      a='\n'
+      a+='                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~.\n'
+      a+='                 .=o=====o==o==o====o===o==o====oo===o~\n'
+      a+='                 .+++==+==+=+====+==+=+===+====+=+=+==~\n'
+      a+='                 .++========+==+======================~\n'
+      a+='                 .+=+++====+=====+==+=========+=====+=~\n'
+      a+='                  +=====++===+=+=======+=+======+=====.\n'
+      a+='                  +==+==+=++=+==++====+==+==+=========.\n'
+      a+='                  :===+==+=====+====+========+==++=+==\n'
+      a+='                  :=+=+=+=+=++=+=+=====+=+===========+\n'
+      a+='                  :=+=++=+=+==+=+====+=+===++=++=++==:\n'
+      a+='                  :=++=+++=++++=++======+====+=+==+==:\n'
+      a+='                  :===++=+==++=+====+=++=+++=++=++===:\n'
+      a+='                  ~=++=+=+++=+==+=+=++=++=+=+=++=+++=~\n'
+      a+='                  ~==++++=++++++=+====++=++++++++=++o~\n'
+      a+='                  ~=+=+=++=++++==+=+==++++++++++++=+=~\n'
+      a+='                  ~=++++++++++=+++===++++++++++++++==.\n'
+      a+='                  ~=++++++=++++++===++++++++++++++++=.\n'
+      a+='                  ~o+==+++++++++++++==++++++++++++===.\n'
+      a+='                  .:~::+++++==+=+++=+=++++++++::+:~~.\n'
+      a+='                         .~~~~~:::+++::::::~~~:~:.\n'
+      a+='          ..~~~~~...      ~~.....~....~~~~~~~::::.\n'
+      a+='        ~+++=======+=~    ~~~~~~.~~.~~~:::::::::+.\n'
+      a+='        ~o++=+=+=====~.~~~~~~~~~~~~~~~:::::::::++\n'
+      a+='        ~=================:~~~~~~~~~~~:::::::+:::~~~...\n'
+      a+='        ~==+====++++++::~~~~~~~~~~~~~~:::::~::~::++++==++::~~~~.\n'
+      a+='        ~==========+=+++::::::~~~~~~~~::::::++++=+========o=o=o==++:~\n'
+      a+='        .====+==+==+=+=========+=+=+=+==================+=+=+=======+\n'
+      a+='        .==+======+=+==+=+==+=====================++++==========+===:\n'
+      a+='         ++=+==+===+++==++=+==++==========+=====+++::+==+=+==+======~\n'
+      a+='         +===++=+++=++++=++=+=+==+=+=+==+========+:~~+======+=====+o~\n'
+      a+='         :=++++=++=+++++=+++++=+=+===+=+======++++~~~+===+=======+=+.\n'
+      a+='         :==+++++++++++++++++++=+=++=======+===++:~~~=++=+=+===+===+.\n'
+      a+='         :=+++++++++++++++++++++++=+==+===+==+=+::~.~+==+=+==+=+=+=:\n'
+      a+='         ~=+=++++++++++++++++++++=++=+=+===+==++:~~.~=++=+=+=======:\n'
+      a+='         ~=++++:+:+++:++++:++++++++++=====+==++::~~.~=+++=++=++==+=~\n'
+      a+='         ~=+++++++++:++++++:+++++++++++=+===+++::~~.~+++=+=+====+==~\n'
+      a+='         .=++++:+++++++::++++++:++++++++==+=+++::~~.:+++++=+===+=+=.\n'
+      a+='         .=+++++++:+::+++:+:+++++++:+++=+==++++:~~~.:+++++++=+=++++.\n'
+      a+='          +++++:+:++++::+:++++++::+++++====+=++:~~~.:++++++==+=++=+\n'
+      a+='          +++++:+++:+++++++::+:+++++++++++=+++::~~~.:++++++++=++==:\n'
+      a+='          ~+++:+++::+:++::+++:+++++:++++==++++::~~~~:+:+++++===++=~\n'
+      a+='          ~=++++:+:+++::+:+:++::++:+++++=++++:::~~.~:+:+++++=+++==~\n'
+      a+='          .+++:++:++::+:+:+::+:++:++++++==++++:~~~.~++:++++=++=+==~\n'
+      a+='          .++++:++::++:+:+:++:++:++:+++++=++++:~~~.~::++++++=+++++.\n'
+      a+='          ~++:++::+:::+:+:+:+:+:++::+++++=+++::~~~.~::+++++=+=++=+\n'
+      a+='          ~+++::++::+::+:+:+:+:+::+++:+++++++::~~~.~++:+++++=+++=:\n'
+      a+='          ~=+++:++::++::+::+:+:+++:+:++++++++::~~~.~++:++++=++++=:\n'
+      a+='          .+:::+:::+::++::+:+:+:::++:+++++++:::~~..~:::++++++==+:~\n'
+      a+='          .+++::++::+::+:+::++::++:+++++++++::~~~.~~~~::::+++~.\n'
+      a+='           +++++::+:++::+::+::+:::+:++:+=++++::~~~.~~~~::.~=.\n'
+      a+='           :+:+::+:::+:::::+:+::++::+++++++:::~~~~~~~~~:::~:.\n'
+      a+='           :++::+:++:::+++:+:::+:::++:++++++:::~~~~~~~~~.~~~~~..\n'
+      a+='           :+::+::::+::::+::::+:++:+:+:+++++:::~~.~:~~~~~~~~::++~\n'
+      a+='           :=+++:+::::++::::+:+:::+::+++++++::~~~.~:++++++++++==~\n'
+      a+='           ~=+=++++:+::::+:+:::++:++:++++++:::~~~.~:::+++++=+++=~\n'
+      a+='           ~o======+++++:::::+::::::++:+++:+::~~~~~::+:+++++==++~\n'
+      a+='           .+===========++++:::::++:::+++++:::~~..~:+:+:+++=++++.\n'
+      a+='            +========+=======++++:::++++++++:~~~~::::+:+++++++++\n'
+      a+='           .========+=====+=+===+++++:++++++:++==o+::+:+++++++=:\n'
+      a+='           :=+=+============:======+=+++++++====+~:==+++++=+===~\n'
+      a+='          .==========+=+===========+========++==+:+===========o~\n'
+      a+='          +=======+===========+=============++==============+==~\n'
+      a+='         ~o========+====+=============+===+=+++==============+=.\n'
+      a+='         +=+==+=============+=====+==========+=+===+=====+====+.\n'
+      a+='        ~============+=========+=======================+======+\n'
+      a+='        +=+======+=======+==============+===+=====+=++========:\n'
+      a+='       ~=+================+========+============++++++=======:\n'
+      a+='      .+====++=====+==========+=======+=============++=====+o~\n'
+      a+='      ~o+=============+=====+===+=========+======+===========~\n'
+      a+='     .=+========+==+=============+=====+======+======+=====+=~\n'
+      a+='     :=+==========+======+======+===+===+========+===========.\n'
+      a+='    ~=+=======+=========+======:+===========+===============+\n'
+      a+='    :======+==========+=======+.+====+========+======+======+\n'
+      a+='   ~o===============+=========~ +========+==========+=====+=:\n'
+      a+='   +============+=========+==:  :=+========================o~\n'
+      a+='  ~=+===++=============+=====.  ~o+=======+=====+=+=======+:.\n'
+      a+='  ===+===========+==+=======:   ~o+====+====++============~\n'
+      a+=' ~==========++=============+    .==+===============+=+==+o~\n'
+      a+='.:=o=====================+=~ .  .+==========+====+========~\n'
+      a+='  ~~+========+========+=+=+      +=====+================+o~\n'
+      a+='     ~:+o===+======+=====o.      :o=+============+=====o=:.\n'
+      a+='        ~:+====+=====+++:~       .~+=====+====+=======+:.\n'
+      a+='        .~+++=====:...              .~+===============:\n'
+      a+='      ~:====:+===++:~                  .:====+=========:\n'
+      a+='    .+=o========+===o~                 .+===============+\n'
+      a+='    .+++===========+=:                  ~==+=====+=======+\n'
+      a+='     ~o=+==========+==.                  .+=+============o:\n'
+      a+='      +======+========~                    :o==============+\n'
+      a+='      ~o++=+==========+                     ~==============o:.\n'
+      a+='       +=======+====+=o~                     ~=============+o+\n'
+      a+='       ~========+======:                      .+============:.\n'
+      a+='       .+==============+                        ~++=========:.\n'
+      a+='        ~===============~                         .:=======+==.\n'
+      a+='         +==+===========+                        ~:========o=:\n'
+      a+='         ~o+============+                      ~+=o========:.\n'
+      a+='          ~+===========~                     ~+=o======o=:~\n'
+      a+='            ~:+==+=====:~.                .~=o=========:.\n'
+      a+='             .:=========o~ .             ~=o=+=======:.\n'
+      a+='           ~:o========o=+.               :o+=====o+:.\n'
+      a+='        .~+=o=======o=:~                 .~:=o==+:.\n'
+      a+='      ~:=o========o+~.                      .~+~.\n'
+      a+='   .~+===========+~.\n'
+      a+=' ~:+o==========:~\n'
+      a+=' +o=+=======+:.\n'
+      a+=' ~+======o+~.\n'
+      a+='  .~+=o=:~\n'
+      a+='     ~~.\n'
+      io('out').textContent=a;
+      io('out').style.fontSize='3px';
+      io('out').style.fontWeight='bold';
+    }
+
+    function construction() {
+      a=parseFloat(io('a').value);
+      durability=io('durability').value;
+      device=io('device').value;
+
+      torque=100000*a**5;
+
+      if (durability==1) {
+        joint="hinge";
+      } else if (durability==10) {
+        joint="wheel";
+      }
+
+      jnt=0.45*a*0.9;
+
+      footz=round(0.5*a);footy=round(0.8*a);footx=round(2.9*a);
+      shinz=round(4.5*a);shiny=round(1.2*a);shinx=round(1.2*a);
+      thigz=round(5.5*a);thigy=round(1.8*a);thigx=round(1.8*a);
+      torsz=round(6.2*a);torsy=round(3.5*a);torsx=round(2.6*a);
+      armz=round(3.9*a);army=round(0.8*a);armx=round(0.8*a);
+      forez=round(3.1*a);forey=round(0.8*a);forex=round(0.8*a);
+      handz=round(2.2*a);handy=round(0.5*a);handx=round(1.0*a);
+      neckz=round(0.9*a);necky=round(1.3*a);neckx=round(1.3*a);
+      headz=round(2.5*a);heady=round(1.7*a);headx=round(2.1*a);
+
+      footv=Math.ceil(footx*footy*footz/8)*2;
+      shinv=Math.ceil(shinx*shiny*(shinz-2*jnt)/8)*2;
+      thigv=Math.ceil(thigx*thigy*(thigz-2*jnt)/8)*2;
+      torsv=Math.ceil(torsx*torsy*(torsz-jnt)/8);
+      armv=Math.ceil(armx*army*(armz-jnt)/8)*2;
+      forev=Math.ceil(forex*forey*(forez-jnt)/8)*2;
+      handv=Math.ceil(handx*handy*handz/8)*2;
+      neckv=Math.ceil(neckx*necky*neckz/8);
+      headv=Math.ceil(headx*heady*headz/8);
+      body=footv+shinv+thigv+torsv+armv+forev+handv+neckv+headv;
+
+      b=0; //blocks amount
+      b+=Math.ceil((2+a*2.5-1+a*2)/2) + Math.ceil((2+a*15.5+(jnt+0.2))/2); //yellow rods
+      b+=2*Math.ceil((2+a*2)/2) + Math.ceil((a+2)/2) + 2*4 + 3*Math.ceil((0.5*a+2)/2); //blue rods
+      b+=Math.ceil((2+a*1.5-2)/2) + Math.ceil((2+a*2)/2) + Math.ceil((2+a*2.5)/2); //red rods
+      b+=2*Math.ceil((2+a*5)/2) + 2*Math.ceil((2+a*4-4)/2) + 2*2*Math.ceil((2+a*1.5)/2); //green rods
+      b+=Math.ceil((a*4)/2); //collarbone?
+      b+=2*Math.ceil((2+a*2)/2); //pink rods
+      b+=2*Math.ceil(((a+2)*(1.4*a)*2)/8) //feet-green link
+      b+=body;
+      b+=2*Math.ceil((2+a*1.4)/2); //green rod's wheel to feet
+      if (joint=="hinge"){
+          wheel=2; //steering + main
+      } else {
+          wheel=6+20+1+1; //legs + lambda + main + steering + foot rotation
+      }
+
+      if (a>4){ //gears
+        b+=58;
+        wheel+=1;
+      }
+    
+    if (torque>1e10){
+        wheel+=Math.ceil(torque/(1e10)); //stacked wheels
+        wheel-=1;
+    }
+
+    mech_h=20.5*a;
+    mech_w=5.7*a;
+    mech_l=8.69*a;
+
+    l_speed=1.1*a*0.5; //lowest
+    m_speed=1.1*a*50; //max
+
+    l_step=6*a;
+    l_stride=12*a;
+    h_step=0.75*a;
+
+    hinge=6+20; //legs, lambda
+    out=`======MECH-CONSTRUCTION======\n`;
+    out+=`\nINFO\n`;
+    out+=` -mech size: ${round(a)}\n`;
+    out+=` -mech height: ${round(mech_h)}\n`;
+    out+=` -mech width: ${round(mech_w)}\n`;
+    out+=` -mech length (with mechanism): ${round(mech_l)}\n`;
+    out+=` -speed: ${round(l_speed)} - ${round(m_speed)} studs/s (max speed)\n`;
+    out+=` -stride length: ${round(l_stride)}\n`;
+    out+=` -step length: ${round(l_step)}\n`;
+    out+=` -step height: ${round(h_step)}\n`;
+    if (device=="mobile" && a>10) {
+      out+=`WARNING: mobile controlled mechs above size 10 can be a bit glitchy\n`
+    }
+    if (mech_l>299) {
+      out+=`WARNING: you probably wont fit this size in the plot but good luck (max that fits is 34.4)\n`
+    }
+
+    out+=`\nMATERIALS\n`;
+    if (joint=="hinge") {
+      out+=` -blocks: ${b} (any block)\n`;
+    } else {
+      out+=` -blocks: ${b} (any strong block, because youre making the higher durability version)\n`;
+    }
+
+    less=wheel-Math.floor(torque*0.9/1e10); //90% less torque
+    percentage=Math.round(100-100*(wheel-less)/Math.ceil(torque/(1e10)));
+
+    if (torque>1e10) {
+        out+=` -new wheels: ${wheel} (${Math.ceil(torque/(1e10))} stacked wheels for proper power, can work with ${less} total wheels at ${percentage}% power)\n`;
+    } else {
+        out+=` -new wheels: ${wheel}\n`;
+    }
+
+    if (joint=="hinge") {
+        out+=` -hinges: ${hinge}\n`;
+    }
+
+    out+=` -servos: 5\n`;
+    out+=` -ropes: 3\n`;
+    out+=` -portals: 2\n`;
+    if (device=="pc") {
+      out+=` -car seat: 1\n`;
+    } else {
+      out+=` -pilot seat: 1\n`;
+    }
+
+    out+=`\nBEFORE YOU BEGIN\n`;
+    out+=` -all tools are required for this (paint, wrench, scale, screwdriver, trowel)\n`;
+    out+=` -i recommend you put \"block harpoon car rope jetpack piston portal dome seat cake firework hinge servo switch\" in your search bar\n`;
+    if (joint=="wheel") {
+      out+=` -while building you should choose stronger blocks like gold, obsidian, titanium, marble... (for higher durability)\n`;
+    }
+    out+=` -you should click the plus on the build tool and make sure you have match rotation OFF, anchor block ENABLED and 1 in the move\n`;
+    out+=` -everytime it mentions a wheel it always means the new wheel (the one with a gap between the wheel and it's block), so don't use old/legacy wheels\n`;
+
+    out+=`\n1. STEP\n`;
+    out+=` -place a block on plot center\n`;
+    out+=` -scale it towards the flag for ${round(2.5*a-1)}\n`;
+    out+=` -move it up by ${round(2*a)}\n`;
+    out+=` -paint it yellow (so you will know which part it is later on)\n`;
+    
+    out+=`\n2. STEP\n`;
+    out+=` -place 2 ${joint}s on the scaled end (one rotated by 180)\n`;
+    if (joint=="wheel") {
+      out+=` -move them inside using 2 in trowel\n`;
+    } else {
+      out+=` -move them to their side with using 1.5 in trowel\n`;
+    }
+
+    out+=`\n3. STEP\n`;
+    out+=` -clone both ${joint}s along the part with ${round(2*a)}\n`;
+
+    out+=`\n4. STEP\n`;
+    out+=` -place a block on each ${joint} (4 blocks in total)\n`;
+    out+=` -paint the 2 blocks that are closer to the flag blue\n`;
+    out+=` -paint the other 2 that are closer to water red\n`;
+
+    out+=`\n5. STEP (blue rods)\n`;
+    out+=` -move the left blue block down by ${round(a)}\n`;
+    out+=` -scale this same block right using 4.5 in scale tool\n`;
+    out+=` -scale the right blue block up and down by ${round(a)}\n`;
+    if (joint=="wheel") {
+        out+=` -move both rods towards the center using 2 in trowel tool\n`;
+    }
+    //pic at end of step 5
+
+    out+=`\n6. STEP\n`;
+    out+=` -scale the left red block up by ${round(1.5*a-2)}\n`;
+    out+=` -scale the right red block up by ${round(2.5*a)}\n`;
+    if (joint=="wheel") {
+        out+=` -move both rods into their ${joint} by 2\n`;
+    }
+    out+=` -on the shorter red colored rod, place a block on top and scale it towards the flag by ${round(a*2)} and paint it red\n`;
+    if (joint=="wheel") {
+        out+=` -delete the back left wheel\n`;
+    } else {
+        out+=` -delete both back hinges and place a wheel at the end facing right\n`;
+        out+=` -move the wheel into the part using 2 in trowel\n`;
+    }
+
+    out+=`\n7. STEP\n`;
+    out+=` -on all 4 colored rods place a ${joint} on each end\n`;
+    if (joint=="wheel") {
+        out+=` -move the ${joint}s inside the rods with 2 in trowel\n`;
+    } else {
+        out+=` -use 1.5 in trowel to move them to their side (the hinge on the left blue rod is already on the side, so skip it)\n`;
+    }
+
+    out+=`\n8. STEP (green rod)\n`;
+    out+=` -on the left side (left side has the 90 degree angle on the red rod), place a block on the ${joint} of the blue rod\n`;
+    out+=` -scale this block up by ${round(5*a)} (after scaled, the orange bubble on the side of it should be aligned with the ${joint})\n`;
+    out+=` -paint it green\n`;
+    if (joint=="wheel") {
+        out+=` -move it into the ${joint} by 2 with in trowel\n`;
+    }
+
+    out+=`\n9. STEP\n`;
+    out+=` -on the other side (right side), place a block on the red rod's upper ${joint}\n`;
+    out+=` -scale it forward and backwards using ${round(2*a-2)}\n`;
+    out+=` -paint it green\n`;
+    if (joint=="wheel") {
+        out+=` -move it into the ${joint} with 2 with in trowel\n`;
+    }
+    //pic at end of step 11
+
+    out+=`\n10. STEP (bent green rod)\n`; //last step for lambda mechanism
+    out+=` -on the horizontal green rod place 2 blocks on each end of it\n`;
+    out+=` -scale the one above the wheel down by ${round(1.5*a)}\n`;
+    out+=` -scale the other block up by ${round(1.5*a)}\n`;
+    out+=` -paint both of them green as well\n`;
+
+    out+=`\n11. STEP\n`;
+    out+=` -place ${joint}s at the top of both green rods (facing out)\n`;
+    if (joint=="wheel") {
+        out+=` -move them down into the part using 2 in trowel\n`;
+    } else {
+        out+=` -move them both to the outer side using 1.5 in trowel like before\n`;
+    }
+
+    longer=0;
+    out+=`\n12.STEP\n`;
+    if (a>4.5) {
+      out+=` -scale the yellow part towards the flag for ${round(2*a)}\n`;
+      out+=` -place a block on the outer side of the blue vertical rod (centered) and paint it blue\n`;
+      out+=` -scale it backwards (towards the flag) using ${round(0.5*a)}\n`;
+      out+=` -place a ${joint} at the end of it\n`;
+      if (joint=="wheel") {
+          out+=` -move it into the part using 2 in trowel\n`;
+      } else {
+          out+=` -move it to the side using 1.5 in trowel like before\n`;
+      }
+      out+=` -move the new rod and the ${joint} into the vertical blue rod using 2\n`;
+    } else {
+      longer=1;
+      out+=` -scale the yellow part towards the flag for ${round(4*a)}\n`
+      out+=` -place a block on the outer side of the blue vertical rod (centered) and paint it blue\n`;
+      out+=` -scale it backwards (towards the flag) using ${round(0.5*a)}\n`;
+      out+=` -place a ${joint} at the end of it\n`;
+      if (joint=="wheel") {
+          out+=` -move it into the part using 2 in trowel\n`;
+      } else {
+          out+=` -move it to the side using 1.5 in trowel like before\n`;
+      }
+    }
+
+    out+=`\n13. STEP\n`;
+    out+=` -place a ${joint} at the bottom of the blue vertical rod\n`;
+    if (joint=="wheel") {
+        out+=` -move it into the part using 2 in trowel\n`;
+    } else {
+        out+=` -move it to the side using 1.5 in trowel like before\n`;
+    }
+    
+    out+=`\n14. STEP\n`;
+    gap=a-0.5*a-2.55*2;
+    if (joint=="wheel") {
+        out+=` -select all the blue rods and the 5 wheels that are attached to them\n`;
+    } else {
+        out+=` -select all the blue rods and the 4 hinges that are attached to them (without the wheel)\n`;
+    }
+    if (longer) {
+      out+=` -clone them backwards 2 times using ${round(2*a)}\n`;
+    } else {
+      out+=` -clone them backwards 2 times using ${round(a)}\n`
+    }
+    out+=` -on the last one delete the horizontal blue rod that goes to the other side and it's ${joint}\n`
+    out+=` -on the last one delete the upper ${joint}\n`;
+    out+=` -scale the last tall blue rod down by ${round(a)}\n`;
+    if (joint=="hinge") {
+      if (longer) {
+      out+=` -select the hinge at the straight red rod and clone it back using ${round(4*a)} and then the cloned one again for ${round(2*a)}\n`;
+      } else {
+      out+=` -select the hinge at the straight red rod and clone it back using ${round(3*a)} and then the cloned one again for ${round(a)}\n`
+      }
+    } else if (joint=="wheel" && (gap-0.5)<0) {
+      out+=` -because there's no gap you have to rotate the 2 wheels that connect yellow-blue (the cloned ones) by 180\n`
+      out+=` -after they're rotated move them into the blue rods using 3 in trowel\n`
+    }
+
+    out+=`\n15. STEP\n`;
+    out+=` -place a block on the right side at the middle piece's lower ${joint} (from the ones you cloned)\n`;
+    if (longer) {
+      out+=` -scale it forward and backwards using ${round(2*a)} and paint it pink\n`;
+    } else {
+      out+=` -scale it forward and backwards using ${round(a)} and paint it pink\n`;
+    }
+    if (joint=="wheel") {
+        out+=` -move it into the wheels using 2\n`;
+    }
+    out+=` -clone the pink piece up by ${round(a)} and backwards by ${round(0.5*a)}\n`;
+
+    out+=`\n16. STEP\n`;
+    out+=` -select the tall green rod on the left side and it's ${joint} at the top\n`;
+    if (longer) {
+      out+=` -clone it backwards once using ${round(2*a)}\n`;
+    } else {
+      out+=` -clone it backwards once using ${round(a)}\n`;
+    }
+
+    out+=`\n17. STEP\n`;
+    out+=` -on the right side (with the bent green rod) select the upper vertical green rod\n`;
+    if (longer) {
+      out+=` -clone it backwards using ${round(6*a)}\n`;
+    } else {
+      out+=` -clone it backwards using ${round(5*a)}\n`;
+    }
+    out+=` -scale it downwards using ${round(1.5*a)} (it should reach the ${joint} below)\n`;
+    if (longer) {
+      out+=` -select the horizontal green rod and clone it up by ${round(1.5*a)} and backwards by ${round(2*a)}\n`;
+    } else {
+      out+=` -select the horizontal green rod and clone it up by ${round(1.5*a)} and backwards by ${round(a)}\n`;
+    }
+    out+=` -scale it forward using 2\n`;
+    if (longer) {
+      out+=` -select the top ${joint} of the bent green rod and clone it backwards using ${round(2*a)}\n`;
+    } else {
+      out+=` -select the top ${joint} of the bent green rod and clone it backwards using ${round(a)}\n`;
+    }
+    
+
+    out+=`\n18. STEP\n`;
+    out+=` -place a block at the end of base part (the end closer to the water)\n`;
+    out+=` -scale it up by ${round(15.5*a)}\n`;
+    if (sym(0.2*a)<0) {
+        out+=` -scale the both sides inwards by ${sym(0.2*a)}\n`;
+    }
+    out+=` -paint it yellow\n`;
+
+    out+=`\n19. STEP (torso)\n`;
+    out+=` -place a block for the torso on top of the tall yellow part\n`;
+    out+=` -scale it up by ${round(torsz-2)}\n`;
+    out+=` -scale the sides out by ${sym(torsy)}\n`;
+    out+=` -scale it backwards and forwards by ${sym(torsx)}\n`;
+    out+=` -TORSO DIMENSIONS (check): ${torsy} x ${torsz} x ${torsx} (these can be off for 0.02)\n`;
+
+    out+=`\n20. STEP (thigh)\n`;
+    out+=` -mirror the torso downwards\n`;
+    out+=` -scale it up by ${round((torsz-thigz))}\n`;
+    out+=` -scale it inwards forwards and backwards by ${round((torsx-thigx)/2)}\n`;
+    out+=` -move the piece to the side of the torso using ${round(1.1*a)}\n`;
+    out+=` -scale the sides inwards by ${round((torsy-thigx)/2)}\n`;
+    out+=` -THIGH DIMENSIONS (check): ${thigy} x ${thigz} x ${thigx} (these can be off for 0.02)\n`;
+    //pic at end of step 15 (or thigh is on the other side)
+
+    out+=`\n21. STEP (shin)\n`;
+    out+=` -mirror the thigh down\n`;
+    out+=` -scale it up by ${round((thigz-shinz))}\n`;
+    out+=` -scale other 4 sides inwards by ${round((thigx-shinx)/2)}\n`;
+    out+=` -SHIN DIMENSIONS (check): ${shiny} x ${shinz} x ${shinx} (these can be off for 0.02)\n`;
+
+    out+=`\n22. STEP (foot)\n`;
+    out+=` -mirror the shin down\n`;
+    out+=` -scale it up by ${round((shinz-footz))}\n`;
+    out+=` -scale it forward by ${round(1.55*a)}\n`;
+    out+=` -scale it back by ${round(0.15*a)}\n`;
+    out+=` -scale both sides inwards with ${round((shiny-footy)/2)} (to make the foot thinner)\n`;
+    out+=` -FOOT DIMENSIONS (check): ${footy} x ${footz} x ${footx} (these can be off for 0.02)\n`;
+
+    if (durability==1) {
+        bz=1;
+    } else {
+        bz=2;
+    }
+
+    out+=`\n23. STEP (ankle joint)\n`;
+    out+=` -move the foot down using ${round(jnt)}\n`;
+    out+=` -scale the shin up using ${round(jnt)}\n`;
+    out+=` -on the ceiling place a new ${joint} (make sure its centered by clicking the shin with scale/trowel)\n`;
+    if (joint=="wheel") {
+        out+=` -move the ${joint} right/left by 1.5 (so that its centered with the trowel's arrow if you click on the shin)\n`;
+    }
+    out+=` -move the ${joint} down by ${round((2*jnt-bz)/2)}\n`;
+    if (joint=="wheel") {
+        if ((jnt-bz/2-2+0.2)>0) {
+            out+=` -place a block on top of the wheel's block and scale it up by ${round(jnt-bz/2-2+0.2)} (it should touch the ceiling)\n`;
+        } else {
+            out+=` -place a block on top of the wheel's block (it should touch the ceiling)\n`;
+        }
+        if ((jnt-5/2-2+0.2)>0) {
+            out+=` -place a block on the underside of the wheel and scale it down by ${round(jnt-5/2-2+0.2)} and up by 0.5 (it has to touch the wheel and the foot)\n`;
+        } else {
+          out+=` -place a block on the underside of the wheel and scale it up by 0.5 (it has to touch the wheel and the foot)\n`;
+        }
+    } else {
+        out+=` -place 2 blocks on the back and front of the hinge\n`;
+        out+=` -use 0.5 in scale tool to turn both blocks into small plates\n`;
+        out+=` -use ${round(jnt)} to scale one plate UP into the ceiling and the other DOWN into the foot\n`;
+    }
+
+    out+=`\n24. STEP (knee joint)\n`;
+    out+=` -scale the shin down using ${round(jnt/0.9)}\n`;
+    out+=` -scale the thigh up using ${round(jnt/0.9)}\n`;
+    out+=` -on the ceiling place a new ${joint} (make sure its centered like before)\n`;
+    if (joint=="wheel") {
+        out+=` -move the ${joint} right/left by 1.5 (so that its centered with the trowel's arrow if you click on the thigh/shin)\n`;
+    }
+    out+=` -move the ${joint} down by ${round((2*jnt/0.9-bz)/2)}\n`;
+    if (joint=="wheel") {
+        if ((jnt/0.9-bz/2-2+0.2)>0) {
+            out+=` -place a block on top of the wheel's block and scale it up by ${round(jnt/0.9-bz/2-2+0.2)} (it should touch the ceiling)\n`;
+        } else {
+            out+=` -place a block on top of the wheel's block (it should touch the ceiling)\n`;
+        }
+        if ((jnt/0.9-5/2-2+0.2)>0) {
+            out+=` -place a block on the underside of the wheel and scale it down by ${round(jnt/0.9-5/2-2+0.2)} and up by 0.5 (it has to touch the wheel and the shin)\n`;
+        } else {
+            out+=` -place a block on the underside of the wheel and scale it up by 0.5 (it has to touch the wheel and the shin)\n`;
+        }
+    } else {
+        out+=` -place 2 blocks on the back and front of the hinge\n`;
+        out+=` -use 0.5 in scale tool to turn both blocks into small plates\n`;
+        out+=` -use ${round(jnt)} to scale one plate UP into the ceiling and the other DOWN into the shin\n`;
+    }
+    if (a>12) {
+        out+=` -place a rope with 2 in the move behind the knee (like in the video) to prevent the knees from bending the wrong way\n`;
+        out+=` -move it back using ${round(a-2)}\n`;
+    }
+
+    out+=`\n25. STEP (hip joint)\n`;
+    out+=` -scale the thigh down using ${round(jnt)}\n`;
+    out+=` -scale the torso up using ${round(jnt)}\n`;
+    out+=` -on the top and center of the thigh place a new ${joint} (make sure its centered)\n`;
+    if (joint=="wheel") {
+        out+=` -move the ${joint} right/left by 1.5 (so that its centered, with the trowel's arrow if you click on the thigh)\n`;
+    }
+    out+=` -move the ${joint} up by ${round((2*jnt-bz)/2)}\n`;
+    if (joint=="wheel") {
+        if ((jnt-bz/2-2+0.2)>0) {
+            out+=` -place a block on top of the wheel's block and scale it up by ${round(jnt-bz/2-2+0.2)} (it should touch the ceiling)\n`;
+        } else {
+            out+=` -place a block on top of the wheel's block (it should touch the ceiling)\n`;
+        }
+        if ((jnt-5/2-2+0.2)>0) {
+            out+=` -place a block on the underside of the wheel and scale it down by ${round(jnt-5/2-2+0.2)} and up by 0.5 (it has to touch the wheel and the thigh)\n`;
+        } else {
+            out+=` -place a block on the underside of the wheel and scale it up by 0.5 (it has to touch the wheel and the thigh)\n`;
+        }
+    } else {
+        out+=` -place 2 blocks on the back and front of the hinge\n`;
+        out+=` -use 0.5 in scale tool to turn both blocks into small plates\n`;
+        out+=` -use ${round(jnt)} to scale one plate UP into the ceiling and the other DOWN into the thigh\n`;
+    }
+
+    out+=`\n26. STEP (clone leg)\n`;
+    out+=` -clone the entire leg to the other side using ${round(2.2*a)}\n`;
+    out+=` -scale the tall yellow part up by ${round(jnt+0.2)}\n`;
+    //pic at end (yellow part should be in the torso)
+
+    out+=`\n27. STEP (move both feet up with pistons)\n`;
+    out+=` -place these pistons from the below the foot downwards and either facing up or down\n`;
+    out+=` -${piston(0.5*a)}\n`;
+    out+=` -place any block at the end of these pistons\n`;
+    out+=` -connect the feet together with any block\n`;
+    out+=` -i strongly recommend you SAVE before unanchoring\n`;
+    out+=` -unanchor the legs except the block under the pistons (if things glitch out after unanchoring, reload and try it again)\n`;
+    out+=` -extend all pistons\n`;
+    out+=` -if any knee bent backwards fix it with a harpoon\n`;
+    out+=` -anchor both feet\n`;
+    out+=` -delete: pistons, their block and the block that connects the feet\n`;
+
+    out+=`\n28. STEP (move left foot with pistons)\n`;
+    out+=` -place these pistons in front of the left foot\n` ;
+    out+=` -${piston(2.5*a)}\n`;
+    out+=` -place any block at the end of them\n`;
+    out+=` -unanchor the pistons and the foot (make sure the piston's block remains anchored)\n`;
+    out+=` -extend all pistons\n`;
+    out+=` -anchor the entire left leg\n`;
+    out+=` -delete: pistons and their block\n`;
+
+    out+=`\n29. STEP (move right foot with pistons)\n`;
+    out+=` -place these pistons behind the right foot\n`;
+    out+=` -${piston(1.5*a)}\n`;
+    out+=` -place any block at the end\n`;
+    out+=` -unanchor the pistons and the foot (the block still has to be anchored)\n`;
+    out+=` -extend all pistons\n`;
+    out+=` -anchor the entire right leg\n`;
+    out+=` -delete: pistons and their block\n`;
+    out+=` -with screwdriver select all and anchor everything\n`;
+
+    out+=`\n30. STEP\n`;
+    out+=` -place a block on one of the ${joint}s of the green rods (1 on each side), scale both of them up by ${round(1.4*a)}\n`;
+    if (longer) {
+      out+=` -scale both of them to the other ${joint} using ${round(2*a)}\n`;
+    } else {
+      out+=` -scale both of them to the other ${joint} using ${round(a)}\n`;
+    }
+    if (joint=="wheel") {
+        out+=` -move them into their ${joint} using 2 in trowel\n`;
+    }
+    out+=` -make sure the both feet are connected to their ${joint}s below them (with the scaled block), if not scale it to the side or add another part to connect it\n`;
+    //pic at end (if you added another part to connect, make sure it doesnt go into the hinge)
+
+    out+=`\n31. STEP (arm)\n`;
+    out+=` -place a block on one side of the torso (in the center of it) (check if its centered by clicking the torso with trowel/scale tool)\n`;
+    out+=` -scale it up and down by ${round(sym(armz))}\n`;
+    out+=` -scale it forward and backwards by ${sym(armx)}\n`;
+    out+=` -scale it out by ${round(armx-2)}\n`;
+    out+=` -ARM DIMENSIONS (check): ${army} x ${armz} x ${armx} (these can be off for 0.02)\n`;
+
+    out+=`\n32. STEP\n`;
+    out+=` -move the arm piece away/out from the torso by ${round(0.3*a)}\n`;
+    out+=` -move the arm up by ${round((torsz-jnt)/2-armz/2)}\n`;
+
+    out+=`\n33. STEP (forearm)\n`;
+    out+=` -mirror the arm piece down\n`;
+    out+=` -scale it up by ${round((3.9-3.1)*a)}\n`;
+    out+=` -FOREARM DIMENSIONS (check): ${forey} x ${forez} x ${forex} (these can be off for 0.02)\n`;
+
+    out+=`\n34. STEP (hand)\n`;
+    out+=` -mirror the forearm down\n`;
+    out+=` -scale it up by ${round((3.1-2.2)*a)}\n`;
+    out+=` -scale it out forwards and backwards using ${round((1-0.8)*a/2)}\n`;
+    out+=` -scale inwards left and right using ${round((0.8-0.5)*a/2)}\n`;
+    out+=` -HAND DIMENSIONS (check): ${handy} x ${handz} x ${handx} (these can be off for 0.02)\n`;
+
+    out+=`\n35. STEP (elbow joint)\n`;
+    if (0<jnt<=2.1) { //same dimensions
+        out+=` -scale the forearm down using 1\n`;
+        out+=` -scale the arm up using 1.5\n`;
+        out+=` -place the servo rotated upwards (so the gray part is inside the arm)\n`;
+        out+=` -move the servo left/right for 0.5 (so its centered)\n`;
+        out+=` -scale the forearm up by 0.5\n`;
+    } else if (2.1<jnt<3) { //one block
+        out+=` -scale the forearm down using ${round(jnt)}\n`;
+        out+=` -scale the arm up using ${round(jnt)}\n`;
+        out+=` -on the top of the forearm (centered) place a servo\n`;
+        out+=` -move the servo right/left by 0.5 (so that its centered with the trowel's arrow if you click the arm/forearm)\n`;
+        out+=` -move the servo up by ${round((2*jnt-2)/2)}\n`;
+        out+=` -place a block on the underside of the lighter gray part and scale it up into the servo using 0.5\n`;
+    } else if (3<=jnt) { //gap on dark part from tiny to max
+        out+=` -scale the forearm down using ${round(jnt)}\n`;
+        out+=` -scale the arm up using ${round(jnt)}\n`;
+        out+=` -on the top of the forearm (centered) place a servo\n`;
+        out+=` -move the servo right/left by 0.5 (so that its centered with the trowel's arrow if you click the arm/forearm)\n`;
+        out+=` -move the servo up by ${round((2*jnt-2)/2)}\n`;
+        out+=` -place a block on the underside of the lighter gray part and scale it down using ${round(jnt-1-2+0.2)} (it should be in the forearm)\n`;
+        out+=` -scale it up into the servo using 0.5\n`;
+        if (jnt>=5) { //gap bigger than 2
+            out+=` -place a block on top of the darker gray part and scale it up using ${round(jnt-3-2+0.2)} and down into the servo using 0.5 (it should be touching the dark gray part and the arm)\n`;
+        } else {
+            out+=` -place a block on top of the darker gray part and scale it down into the servo using 0.5 (it should connect the dark gray part and the arm)\n`;
+        }
+    }
+
+    out+=`\n36. STEP (clone arm)\n`;
+    out+=` -clone the entire arm to the other side using ${round(2*2.45*a)}\n`;
+
+    out+=`\n37. STEP (shoulder joints)\n`; //3 scenarios
+    shs=0.3*a;
+    mvs=(torsz-jnt)/2-armx/2;
+    if (shs<2) { //servo only
+        out+=` -place a servo on each side of the torso (centered and facing down)\n`;
+        if (shs<1.1) { //move servo inside
+            out+=` -move both servos inside the torso using 0.9\n`;
+        }
+        out+=` -move both of them up by ${round(mvs)} (should be in the arm)\n`;
+    } else { //servo + collarbone?
+        out+=` -place a block on the front side of the torso (centered)\n`;
+        out+=` -scale this block left and right with ${round((torsy/2-1)+shs-1.5)} in scale\n`;
+        out+=` -move this piece up by ${round(mvs)}\n`;
+        out+=` -move this piece into the torso using ${round(torsx/2+1)}\n`;
+        out+=` -place a servo on each end facing downwards (half of the servo's dark part should be in the arm)\n`;
+    }
+
+    out+=`\n38. STEP (neck)\n`;
+    out+=` -place a block on top of the torso (centered) (you can check if its centered with trowel/scale tool)\n`;
+    out+=` -scale it on 4 sides using ${sym(neckx)}\n`;
+    out+=` -scale it up using ${round(0.9*a-2)}\n`;
+    out+=` -NECK DIMENSOINS (check): ${necky} x ${neckz} x ${neckx} (these can be off for 0.02)\n`;
+
+    out+=`\n39. STEP (head)\n`;
+    out+=` -mirror the neck up\n`;
+    out+=` -scale it up by ${round(headz-neckz)}\n`;
+    out+=` -scale the sides out by ${round((heady-necky)/2)}\n`;
+    out+=` -scale it forwards and backwards by ${round((headx-neckx)/2)}\n`;
+    out+=` -HEAD DIMENSOINS (check): ${heady} x ${headz} x ${headx} (these can be off for 0.02)\n`;
+    
+    out+=`\n40. STEP\n`;
+    out+=` -move the neck backwards using ${round(0.2*a)}\n`;
+
+    out+=`\nOPTIONAL STEP (neck joint)\n`;
+    out+=` -scale the head up by 0.5\n`;
+    out+=` -scale the neck down by 0.5\n`;
+    out+=` -place a servo (facing forwards) on top of the neck (centered) (if its hard to do this you can move your camera into the head to see the top of the neck easier)\n`;
+    out+=` -move the servo down by 0.5\n`;
+    //pic at end
+
+    out+=`\n41. STEP\n`;
+    out+=` -place a block on the plot (with about 15 blocks of space to build around it)\n`;
+    out+=` -place another block on the ground and scale it in 2 directions with 20 in scale (to make a flat square/platform)\n`;
+    out+=` -place a dome camera and a portal on it\n`;
+
+    out+=`\n42. STEP\n`;
+    out+=` -click the camera, select the platform, camera and the portal\n`;
+    out+=` -enter 1000 in trowel and move it up 15 times (using arrow below the platform while in trowel) so you move it for 15000 or more up in the air\n`;
+    out+=` -exit the camera\n`;
+
+    out+=`\n43. STEP\n`;
+    out+=` -place another portal on the ground\n`;
+    out+=` -go through the portal and delete the camera on the platform\n`;
+    out+=` -place a block on the platform\n`;
+
+    out+=`\n44. STEP\n`;
+    out+=` -go to the block up on the platform (not down on the plot)\n`;
+    out+=` -place the first part of the rope on the block\n`;
+    out+=` -go through the portal and place the second part on the block on the plot\n`;
+
+    out+=`\n45. STEP\n`;
+    out+=` -go up on the platform\n`;
+    out+=` -in the build tool menu you should have 1 in the move for this step\n`;
+    out+=` -place a seat on the block (place the seat so its on the side and touching the rope and the block below it, when you sit you should face into the rope)\n`;
+    out+=` -delete the block under the rope\n`;
+
+    out+=`\n46. STEP\n`;
+    out+=` -equip any jetpack (because you will fall down a lot)\n`;
+    out+=` -sit in the seat\n`;
+    out+=` -place a cake/firework on the edge of the seat (so half of it is touching the rope part as well)\n`;
+    out+=` -delete the chair\n`;
+    out+=` -unanchor the firework and the rope (the rope should be attached to you now)\n`;
+    out+=` -while on the platform delete the portal\n`;
+    out+=` -now when you delete the platform youre standing on you will fall down, aim to land on the torso\n`;
+    out+=` -place a seat on the torso and move it down using 0.9\n`;
+    out+=` -sit and anchor the rope (the rope should be anchored while in the torso)\n`;
+    out+=` -delete firework/cake and the seat\n`;
+    out+=` -you can now also delete the portal on the ground\n`;
+
+    if (a>10) {
+        out+=`\nRECOMMENDED STEP\n`;
+        out+=` -since your mech is pretty big, i recommend you place a portal on the plot's ground and somewhere on the mech so you can get to it faster\n`;
+    }
+
+    if (device=="pc") {
+        out+=`\n47. STEP\n`; //steering mechanism
+        out+=` -go to the rope on the ground\n`;
+        out+=` -delete the block under it and place a wheel below it\n`;
+        out+=` -move the wheel into the ground by 2\n`;
+        if (a>4) {
+            out+=` -clone the wheel in any horizontal direction using 14\n`;
+            out+=`\nSMALL GEAR\n`;
+            out+=` -place a block on top of the cloned wheel (centered)`;
+            out+=` -scale that block forward and backwards inwards 0.6 (should be a thin piece now)\n`; //m1 d8 gear
+            out+=` -scale that same block left and right outwards by 4\n`;
+            out+=` -clone that piece up using 3 in trowel\n`;
+            out+=` -rotate it for 90 degrees\n`;
+            out+=` -move it back down with 3 in trowel\n`;
+            out+=` -clone both the pieces up using 3\n`;
+            out+=` -rotate it for 45 degrees and move them back down\n`;
+            out+=` -select all of them and rotate it all for 22.5 degrees\n`;
+            out+=`\nBIG GEAR\n`;
+            out+=` -on the other wheel with the rope place a block on top of it (centered)\n`;
+            out+=` -scale that block forward and backwards inwards 0.55 (should become a thin piece again)\n`; //m1 d20 gear
+            out+=` -scale that same block left and right outwards by 10\n`;
+            out+=` -clone that piece up using 3 in trowel\n`;
+            out+=` -rotate that piece for 18 degrees\n`;
+            out+=` -move it back down\n`;
+            out+=` -repeat cloning, rotating, moving until its a full gear (you can select multiple of the thin pieces at once)\n`;
+            out+=` -select both gears and move them down using 0.5 in trowel\n`;
+        }
+    
+        if (torque>1e10) {
+            out+=`\nEXTRA STEP\n`; //stack wheels
+            out+=` -because a max torque wheel isnt strong enough for this size you have to stack about ${Math.ceil(torque/(1e10))} wheels for main wheel (the wheel at the middle of the first blue rod)\n`;
+        }
+    
+        out+=`\n48. STEP (pc controls)\n`; //controls
+        out+=` -go on top of the torso (or wherever you wanna place your seat)\n`;
+        out+=` -place a dummy seat first (a few stuff should get connected to it)\n`;
+        out+=` -place your actual seat (make sure its not a pilot seat)\n`;
+        out+=` -delete the dummy seat\n`;
+        out+=` -unbind everything from your main seat (one thing probably binded itself to it)\n`;
+        out+=` -select the 2 servos in the shoulder, and in the neck (if you placed it) and bind them to your seat using Left: A, Right: D\n`;
+        if (a>4) {
+            out+=` -select the wheel under the small gear and bind it using Forward: A, Backward: D\n`;
+        } else {
+            out+=` -select the wheel under the rope and bind it using Forward: D, Backward: A\n`;
+        }
+        if (torque>1e10) {
+            out+=` -spread out all the stacked main wheels (at the blue rod) and select them all with wrench and bind them to the seat using Forward: S, Backward: W\n`;
+            out+=` -after theyre connected, stack them back in place\n`;
+        } else {
+            out+=` -select the wheel at the middle of the blue rod and bind it using Forward: S, Backward: W\n`;
+        }
+    
+        out+=`\n49. STEP (switch)\n`;
+        out+=` -place a switch close to your seat\n`;
+        out+=` -if it connects to a bunch of stuff you have to place a dummy switch like for the seat earlier\n`;
+        out+=` -make sure its only binded to the servos in both elbows\n`;
+        out+=` -after trying it out, if the elbows turn the wrong way then turn on reverse rotation on both servos in the elbows\n`;
+    
+        out+=`\n50. STEP (properties)\n`; //settings
+        out+=` -if you placed the servo in the neck set its torque to max and angle to 20, speed to 1\n`;
+        out+=` -select all 4 servos in the arms and set their torque to max, speed to 5\n`;
+        out+=` -for the top 2 servos (the shoulder ones) set their angle to 20\n`;
+        if (a>4) {
+            out+=` -select both wheels under the gears and set their torque to max and wheel speed to whatever you want (for example 5, this is the turning/steering speed of the mech)\n`;
+        } else {
+            out+=` -select the wheel under the rope and set its torque to max and wheel speed to whatever you want (for example 5, this is the turning/steering speed of the mech)\n`;
+        }
+        if (torque>1e10) {
+            out+=` -select all the wheels next to the blue rod (the binded ones) with screwdriver and set their torque to max, speed to whatever you want (for example 5)\n`;
+        } else {
+            out+=` -select the wheel next to the blue rod (the binded one) with screwdriver and set it's torque to max, speed to whatever you want (for example 5)\n`;
+        }
+    
+        out+=`\n51. STEP (collision off and invisibility)\n`; //hide mechanism
+        out+=` -with screwdriver select the entire mechanism below the feet (along with the tall yellow part) and make it 100% transparent and turn its collision to off\n`;
+        if (joint=="wheel") {
+            out+=` -select all the rods that are holding up the ropes and make them invisible and turn their collision to off\n`;
+        }
+    
+      } else { //mobile scenario
+        out+=`\n 47. STEP\n`; //steering
+        out+=` -go to the rope on the ground\n`;
+        out+=` -delete the block under it and place a wheel below it (the circular part should be facing up)\n`;
+        out+=` -move the wheel into the ground by 2\n`;
+        out+=` -place a dummy seat/switch on the ground first (it should connect to a few stuff)\n`;
+        out+=` -place a pilot seat on the wheel\n`;
+        out+=` -disconnect it from the wheel below\n`;
+        out+=` -delete the dummy seat now\n`;
+
+        if (torque>1e10) {
+            out+=`\nEXTRA STEP\n`; //stack wheels
+            out+=` -because a max torque wheel isnt strong enough for this size you have to stack about ${Math.ceil(torque/(1e10))} wheels for main wheel (the wheel at the middle of the first blue rod)\n`;
+        }
+
+        out+=`\n48. STEP (mobile controls)\n`; //controls
+        out+=` -select the 2 servos in the shoulder, and in the neck (if you placed it) and bind them to your pilot seat\n`;
+        if (torque>1e10) {
+            out+=` -spread out all the stacked main wheels (at the blue rod) and select them all with wrench and bind them to the pilot seat\n`;
+            out+=` -after they're connected, stack them back in place\n`;
+        } else {
+            out+=` -select the wheel at the middle of the blue rod and bind it to your pilot seat\n`;
+        }
+
+        out+=`\n49. STEP (switch for elbows)\n`;
+        out+=` -place a dome camera on the mech somewhere (i recommend in the torso/head)\n`;
+        out+=` -place a switch somewhere close to your seat (if it connects to a bunch of stuff you have to place a dummy switch like with for the seat earlier)\n`;
+        out+=` -make sure its only binded to the servos in both elbows\n`;
+        out+=` -after finishing the mech and trying it out, if the elbows turn the wrong way then turn on reverse rotation on both servos in the elbows\n`;
+
+        out+=`\n50. STEP (properties)\n`; //settings
+        out+=` -if you placed the servo in the neck set it's torque to max and angle to 20, speed to 1\n`;
+        out+=` -select all 4 servos in the arms and set their torque to max, speed to 5\n`;
+        out+=` -for the top 2 servos (the shoulder ones) set their angle to 20\n`;
+        out+=` -select the wheel under the pilot seat and set it's torque to max (even though its not powered, it will make the mech more stable)\n`;
+        if (torque>1e10) {
+            out+=` -select all the wheels next to the blue rod (the binded ones) with screwdriver and set their torque to max, speed to whatever you want (for example 5)\n`;
+        } else {
+            out+=` -select the wheel next to the blue rod (the binded one) with screwdriver and set it's torque to max, speed to whatever you want (for example 5)\n`;
+        }
+
+        out+=`\n51. STEP (collision off and invisibility)\n`; //hide mechanism
+        out+=` -with screwdriver select the entire mechanism below the feet (along with the tall yellow part) and make it 100% transparent and turn its collision to off\n`;
+        if (joint=="wheel") {
+            out+=` -select all the rods that are holding up the ropes and make them invisible and turn their collision to off\n`;
+        }
+      }
+    
+    out+=`\nOPTIONAL STEP (launch proofing)\n`;
+    out+=` -place a block on each wheel/hinge that is undeground (the ones from ropes)\n`;
+    if (a>4 && device=="pc") {
+        out+=` -you should see 2 of them, so place 2 below them\n`;
+    } else {
+        out+=` -you should see one, so place a block below it\n`;
+    }
+    out+=` -scale the block(s) into the terrain on the sides of the plot (doesn't matter which side)\n`;
+    out+=` -each wheel should be connected to the terrain (this will keep it in place even after launching)\n`;
+    out+=` -make sure the newly placed wheels are not connected to your main seat\n`;
+
+    out+=`\nOPTIONAL STEP (increase friction)\n`;
+    out+=` -if you think your mech is pretty slippery you can increase the friction by\n`;
+    out+=` -increase friction by placing wheels on the underside of your feet\n`;
+    out+=` -or increase friction by using bricks/concrete or rusted metal under the feet\n`;
+
+    if (a>12) {
+        out+=`\nOPTIONAL STEP (fix shaking and steering)\n`;
+        out+=` -if your mech shakes/swings too much while walking you can fix this by adding about 1000 or more titanium/metal/rusted blocks (scaled) to the big gear\n`;
+        if (device=="pc") {
+            out+=` -if you can hardly steer your mech you can stack the wheels under the small gear\n`;
+        }
+    }
+
+    io('out').textContent=out;
+    io('out').style.fontSize='16px';
+    io('out').style.fontWeight='normal';
+  }
+
+  asciimech();
+
+  function check() {
+    a=parseFloat(io('a').value);
+    durability=io('durability').value;
+    valid=0;
+    out=``;
+    
+    if (durability==10) {
+      if (a>=mw) {
+        valid=1;
+      } else {
+        out=`ERROR: Size too small (entered ${a}, minimum for higher durability is ${mw})`;
+      }
+    } else if (durability==1) {
+      if (a>=mh) {
+        valid=1;
+      } else {
+        out=`ERROR: Size too small (entered ${a}, minimum for low durability is ${mh})`;
+      }
+    }
+
+    if (valid) {
+      construction();
+    } else {
+      io('out').textContent=out;
+      io('out').style.fontSize='16px';
+      io('out').style.fontWeight='normal';
+    }
+  }
+
+  io('calc').onclick=check;
+  </script>
+</body>
+</html>

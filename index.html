@@ -703,7 +703,7 @@
         out+=` -place the servo rotated upwards (so the gray part is inside the arm)\n`;
         out+=` -move the servo left/right for 0.5 (so its centered)\n`;
         out+=` -scale the forearm up by 0.5\n`;
-    } else if (2.1<jnt<3) { //one block
+    } else if (jnt<3) { //one block
         out+=` -scale the forearm down using ${round(jnt)}\n`;
         out+=` -scale the arm up using ${round(jnt)}\n`;
         out+=` -on the top of the forearm (centered) place a servo\n`;

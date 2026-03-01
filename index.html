@@ -697,7 +697,7 @@
     out+=` -HAND DIMENSIONS (check): ${handy} x ${handz} x ${handx} (these can be off for 0.02)\n`;
 
     out+=`\n35. STEP (elbow joint)\n`;
-    if (0<jnt<=2.1) { //same dimensions
+    if (jnt<=2.1) { //same dimensions
         out+=` -scale the forearm down using 1\n`;
         out+=` -scale the arm up using 1.5\n`;
         out+=` -place the servo rotated upwards (so the gray part is inside the arm)\n`;

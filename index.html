@@ -928,9 +928,11 @@
         out+=` -for the top 2 servos (the shoulder ones) set their angle to 20\n`;
         out+=` -select the wheel under the pilot seat and set it's torque to max (even though its not powered, it will make the mech more stable)\n`;
         if (torque>1e10) {
-            out+=` -select all the wheels next to the blue rod (the binded ones) with screwdriver and set their torque to max, speed to whatever you want (for example 5)\n`;
+          out+=` -select all the wheels next to the blue rod (the binded ones) with screwdriver and set their torque to max, speed to whatever you want (for example 5)\n`;
+          out+=` -turn on reverse rotation for them as well\n`;
         } else {
-            out+=` -select the wheel next to the blue rod (the binded one) with screwdriver and set it's torque to max, speed to whatever you want (for example 5)\n`;
+          out+=` -select the wheel next to the blue rod (the binded one) with screwdriver and set it's torque to max, speed to whatever you want (for example 5)\n`;
+          out+=` -turn on reverse rotation for it as well\n`;
         }
 
         out+=`\n51. STEP (collision off and invisibility)\n`; //hide mechanism

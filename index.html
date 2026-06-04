@@ -9,7 +9,13 @@
 <body style=background-color:#707070>
   <h2>Full Mech Calculator (for BABFT)</h2>
 
-  <label>Mech size (a): <input id="a" type="number" step="any" value="4"></label><br>
+  <label>Explained in: <a href="https://www.youtube.com/watch?v=b6soMQOfDVI">Build a Boat - Full mech (tutorial)</a></label>
+  <br>
+  <br>
+
+  <label>Wood block: <input id="wood_b" type="number" step="any" value="0"></label><br>
+
+  <label>Wood rod: <input id="wood_r" type="number" step="any" value="0"></label><br>
 
   <label>Durability:
     <select id="durability">
@@ -192,7 +198,6 @@
       device=io('device').value;
 
       torque=100000*a**5;
-      steering=15000*a**5; //steering torque
 
       if (durability==1) {
         joint="hinge";
@@ -592,12 +597,11 @@
     } else {
         out+=` -place 2 blocks on the back and front of the hinge\n`;
         out+=` -use 0.5 in scale tool to turn both blocks into small plates\n`;
-        out+=` -use ${round(jnt/0.9)} to scale one plate UP into the ceiling and the other DOWN into the shin\n`;
+        out+=` -use ${round(jnt)} to scale one plate UP into the ceiling and the other DOWN into the shin\n`;
     }
     if (a>12) {
         out+=` -place a rope with 2 in the move behind the knee (like in the video) to prevent the knees from bending the wrong way\n`;
-        out+=` -move it back using ${round(0.5*a-2)}\n`;
-        out+=` -disable match rotation on it\n`;
+        out+=` -move it back using ${round(a-2)}\n`;
     }
 
     out+=`\n25. STEP (hip joint)\n`;
@@ -698,13 +702,13 @@
     out+=` -HAND DIMENSIONS (check): ${handy} x ${handz} x ${handx} (these can be off for 0.02)\n`;
 
     out+=`\n35. STEP (elbow joint)\n`;
-    if (jnt<=2.1) { //same dimensions
+    if (0<jnt<=2.1) { //same dimensions
         out+=` -scale the forearm down using 1\n`;
         out+=` -scale the arm up using 1.5\n`;
         out+=` -place the servo rotated upwards (so the gray part is inside the arm)\n`;
         out+=` -move the servo left/right for 0.5 (so its centered)\n`;
         out+=` -scale the forearm up by 0.5\n`;
-    } else if (jnt<3) { //one block
+    } else if (2.1<jnt<3) { //one block
         out+=` -scale the forearm down using ${round(jnt)}\n`;
         out+=` -scale the arm up using ${round(jnt)}\n`;
         out+=` -on the top of the forearm (centered) place a servo\n`;
@@ -821,7 +825,7 @@
         if (a>4) {
             out+=` -clone the wheel in any horizontal direction using 14\n`;
             out+=`\nSMALL GEAR\n`;
-            out+=` -place a block on top of the cloned wheel (centered)\n`;
+            out+=` -place a block on top of the cloned wheel (centered)`;
             out+=` -scale that block forward and backwards inwards 0.6 (should be a thin piece now)\n`; //m1 d8 gear
             out+=` -scale that same block left and right outwards by 4\n`;
             out+=` -clone that piece up using 3 in trowel\n`;
@@ -928,11 +932,9 @@
         out+=` -for the top 2 servos (the shoulder ones) set their angle to 20\n`;
         out+=` -select the wheel under the pilot seat and set it's torque to max (even though its not powered, it will make the mech more stable)\n`;
         if (torque>1e10) {
-          out+=` -select all the wheels next to the blue rod (the binded ones) with screwdriver and set their torque to max, speed to whatever you want (for example 5)\n`;
-          out+=` -turn on reverse rotation for them as well\n`;
+            out+=` -select all the wheels next to the blue rod (the binded ones) with screwdriver and set their torque to max, speed to whatever you want (for example 5)\n`;
         } else {
-          out+=` -select the wheel next to the blue rod (the binded one) with screwdriver and set it's torque to max, speed to whatever you want (for example 5)\n`;
-          out+=` -turn on reverse rotation for it as well\n`;
+            out+=` -select the wheel next to the blue rod (the binded one) with screwdriver and set it's torque to max, speed to whatever you want (for example 5)\n`;
         }
 
         out+=`\n51. STEP (collision off and invisibility)\n`; //hide mechanism
